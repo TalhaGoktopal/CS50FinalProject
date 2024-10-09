@@ -62,32 +62,29 @@ def register():
 
     if request.method == "POST":
         emailAddress = request.form.get("Email")
-        if emailAddress != request.form.get("confirmEmail"):
-            pass #Render teh eror function telling the user the email dont match
-        
-        numListings = request.form.get("numberOfListings")
-        emailPriority = request.form.get("priority")
+        if emailAddress == request.form.get("confirmEmail"):
+            
+            numListings = request.form.get("numberOfListings")
+            emailPriority = request.form.get("priority")
 
-        #Check if email is already saved
-        cursor.execute("""SELECT email FROM emails WHERE email = ?""", (emailAddress,))
-        savedEmails = cursor.fetchall()
+            #Check if email is already saved
+            cursor.execute("""SELECT email FROM emails WHERE email = ?""", (emailAddress,))
+            savedEmails = cursor.fetchall()
 
-        for savedEmail in savedEmails:
-            if emailAddress in savedEmail:
-                emailSaved = True
+            for savedEmail in savedEmails:
+                if emailAddress in savedEmail:
+                    emailSaved = True
         
-        
-        if emailSaved == True:
-            #If it is updates its preferences
-            cursor.execute("""UPDATE emails SET priority = ?, numberOfListings = ?  WHERE email == ?""", (emailPriority, numListings, emailAddress))    
+            if emailSaved == True:
+                #If it is updates its preferences
+                cursor.execute("""UPDATE emails SET priority = ?, numberOfListings = ?  WHERE email == ?""", (emailPriority, numListings, emailAddress))    
 
-        #Else create a new entry with preferences
-        else:
-            cursor.execute("""INSERT INTO emails (email, priority, numberOfListings) VALUES (?, ?, ?)""", (emailAddress,emailPriority, numListings ))
-    
-        connection.commit()
-        return redirect("/")
-    return render_template("register.html")
+            #Else create a new entry with preferences
+            else:
+                cursor.execute("""INSERT INTO emails (email, priority, numberOfListings) VALUES (?, ?, ?)""", (emailAddress,emailPriority, numListings ))
+        
+            connection.commit()
+            return redirect("/")
 
 
 if __name__ == '__main__':
